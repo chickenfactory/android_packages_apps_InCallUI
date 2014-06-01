@@ -66,7 +66,6 @@ public class InCallActivity extends Activity {
 
     /** Use to pass 'showDialpad' from {@link #onNewIntent} to {@link #onResume} */
     private boolean mShowDialpadRequested;
-    private boolean mCallCardHidden;
     private boolean mConferenceManagerShown;
 
     // This enum maps to Phone.SuppService defined in telephony
@@ -494,7 +493,7 @@ public class InCallActivity extends Activity {
     }
 
     private void updateSystemBarTranslucency() {
-        final boolean doTranslucency = !mCallCardHidden && !mConferenceManagerShown;
+        final boolean doTranslucency = !mConferenceManagerShown;
         final Window window = getWindow();
 
         if (doTranslucency) {
