@@ -481,6 +481,13 @@ public class InCallActivity extends Activity {
         }
     }
 
+    public void onManageConferenceDoneClicked() {
+        if (mConferenceManagerShown && !mConferenceManagerFragment.isVisible()) {
+            mConferenceManagerShown = false;
+            updateSystemBarTranslucency();
+        }
+    }
+
     private void updateSystemBarTranslucency() {
         final boolean doTranslucency = !mCallCardHidden && !mConferenceManagerShown;
         final Window window = getWindow();
