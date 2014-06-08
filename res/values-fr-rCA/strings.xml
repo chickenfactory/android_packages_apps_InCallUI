@@ -29,7 +29,7 @@
     <string name="callFailed_number_unreachable" msgid="7632566442515734778">"Numéro injoignable"</string>
     <string name="callFailed_invalid_credentials" msgid="8226835346196775378">"Nom d\'utilisateur ou mot de passe incorrect."</string>
     <string name="callFailed_out_of_network" msgid="8740943329772180507">"Appel effectué hors réseau"</string>
-    <string name="callFailed_server_error" msgid="5717915213586193217">"Erreur serveur : réessayez plus tard."</string>
+    <string name="callFailed_server_error" msgid="5717915213586193217">"Erreur serveur : réessayez plus tard."</string>
     <string name="callFailed_noSignal" msgid="1889803273616031933">"Aucun signal"</string>
     <string name="callFailed_limitExceeded" msgid="4958065157970101491">"Limite ACM dépassée"</string>
     <string name="callFailed_powerOff" msgid="2766035859391549713">"Signal radio désactivé"</string>
@@ -154,7 +154,7 @@
     <string name="description_target_send_sms" msgid="2098326025587950144">"Envoyer un message texte"</string>
     <string name="description_target_decline" msgid="4789834364389731957">"Refuser"</string>
     <string name="description_direction_up" msgid="4441409581444516690">"Faites glisser votre doigt vers le haut pour <xliff:g id="TARGET_DESCRIPTION">%s</xliff:g>."</string>
-    <string name="description_direction_left" msgid="7129873384376533287">"Faites glisser votre doigt vers la gauche pour <xliff:g id="TARGET_DESCRIPTION">%s</xliff:g>."</string>
+    <string name="description_direction_left" msgid="7129873384376533287">"Faites glisser votre doigt vers la gauche pour <xliff:g id="TARGET_DESCRIPTION">%s</xliff:g>."</string>
     <string name="description_direction_right" msgid="2122584234531957308">"Faites glisser votre doigt vers la droite pour <xliff:g id="TARGET_DESCRIPTION">%s</xliff:g>."</string>
     <string name="voicemail_notification_vibrate_when_title" msgid="8361970092063604886">"Vibreur"</string>
     <string name="voicemail_notification_vibarte_when_dialog_title" msgid="5739583146522136440">"Vibreur"</string>
