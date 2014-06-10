@@ -74,6 +74,7 @@ public class InCallPresenter implements CallList.Listener {
     private boolean mCallUiInBackground = false;
     private static String LOG_TAG = "InCallPresenter";
     VideoCallManager mVideoCallManager;
+    private boolean mVibrateOnOutgoingPickup = false;
 
     /**
      * This table is for deciding whether consent is
