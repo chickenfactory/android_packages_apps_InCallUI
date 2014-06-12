@@ -468,7 +468,6 @@ public class InCallActivity extends Activity {
         }
         ft.commitAllowingStateLoss();
 
-        mCallCardHidden = showDialpad;
         InCallPresenter.getInstance().getProximitySensor().onDialpadVisible(showDialpad);
         updateSystemBarTranslucency();
     }
