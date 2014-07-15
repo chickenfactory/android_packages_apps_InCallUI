@@ -180,6 +180,7 @@ public class CallCardFragment extends BaseFragment<CallCardPresenter, CallCardPr
         LayoutTransition transition = photoContainer.getLayoutTransition();
         transition.enableTransitionType(LayoutTransition.CHANGING);
         transition.setAnimateParentHierarchy(false);
+        transition.setDuration(200);
     }
 
     @Override
