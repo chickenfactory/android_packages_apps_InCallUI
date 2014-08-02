@@ -384,11 +384,16 @@ public class InCallPresenter implements CallList.Listener {
             listener.onStateChange(mInCallState, callList);
         }
 
-        if (MSimTelephonyManager.getDefault().getMultiSimConfiguration()
-                == MSimTelephonyManager.MultiSimVariants.DSDA && (mInCallActivity != null)) {
-            mInCallActivity.updateDsdaTab();
-        }
         if (isActivityStarted()) {
+            MSimTelephonyManager tm = MSimTelephonyManager.getDefault();
+
+            if (tm.getMultiSimConfiguration() == MSimTelephonyManager.MultiSimVariants.DSDA) {
+                mInCallActivity.updateDsdaTab();
+            }
+            if (newState != InCallState.DISCONNECTING) {
+                mInCallActivity.updateSystemBarTranslucency();
+            }
+
             final boolean hasCall = callList.getActiveOrBackgroundCall() != null ||
                     callList.getOutgoingCall() != null;
             mInCallActivity.dismissKeyguard(hasCall);
@@ -462,10 +467,11 @@ public class InCallPresenter implements CallList.Listener {
         } else if (callList.getOutgoingCall() != null) {
             newState = InCallState.OUTGOING;
         } else if (callList.getActiveCall() != null ||
-                callList.getBackgroundCall() != null ||
-                callList.getDisconnectedCall() != null ||
-                callList.getDisconnectingCall() != null) {
+                callList.getBackgroundCall() != null) {
             newState = InCallState.INCALL;
+        } else if (callList.getDisconnectedCall() != null ||
+                callList.getDisconnectingCall() != null) {
+            newState = InCallState.DISCONNECTING;
         }
 
         return newState;
@@ -818,7 +824,9 @@ public class InCallPresenter implements CallList.Listener {
 
         // check if the user want to have the call UI in background and set it up
         mCallUiInBackground = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.CALL_UI_IN_BACKGROUND, 0) == 1;
+                Settings.System.CALL_UI_IN_BACKGROUND, 1) == 1;
+
+        boolean isHeadsUp = false;
 
         if (mCallUiInBackground) {
             // get power service to check later if screen is on
@@ -832,10 +840,14 @@ public class InCallPresenter implements CallList.Listener {
             } catch (RemoteException e) {
             }
             mCallUiInBackground = pm.isScreenOn() && !isKeyguardShowing;
+
+            // Check if user want to see notification as heads up.
+            isHeadsUp = Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.CALL_UI_AS_HEADS_UP, 1) == 1;
         }
 
         mStatusBarNotifier.updateNotificationAndLaunchIncomingCallUi(
-                inCallState, mCallList, mCallUiInBackground);
+                inCallState, mCallList, mCallUiInBackground, isHeadsUp);
     }
 
     /**
@@ -847,7 +859,7 @@ public class InCallPresenter implements CallList.Listener {
         // First cancel the actual notification and then update
         mStatusBarNotifier.cancelInCall();
         mStatusBarNotifier.updateNotificationAndLaunchIncomingCallUi(
-                InCallState.INCALL, mCallList, false);
+                InCallState.INCALL, mCallList, false, false);
     }
 
     /**
@@ -965,6 +977,9 @@ public class InCallPresenter implements CallList.Listener {
 
         // In-call experience is showing
         INCALL,
+
+        // Like in-call, but without a connected call
+        DISCONNECTING,
 
         // User is dialing out
         OUTGOING;
