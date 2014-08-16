@@ -36,7 +36,7 @@
               android:id="@+id/bottomButtons"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:background="#0000ff"
+              android:background="#0c0c0c"
               android:layout_margin="0dp"
               android:padding="0dp"
               android:layout_height="wrap_content"
@@ -196,6 +196,14 @@
                     android:src="@drawable/ic_block_contact_holo_dark"
                     android:contentDescription="@string/onscreenBlacklistText"
                 />
+
+        <com.android.incallui.CallRecordingButton
+                     android:id="@+id/recordButton"
+                     style="@style/InCallButton"
+                     android:src="@drawable/ic_record_holo_dark"
+                     android:contentDescription="@string/onscreenRecordText"
+                     android:visibility="gone"
+                     />
 
         <!-- Separator between 4th (or 5th) button and right padding -->
         <View style="@style/VerticalSeparator" />
