@@ -120,6 +120,16 @@ public class InCallActivity extends Activity {
                 false, mSettingsObserver);
         updateSettings();
 
+        // Handle the Intent we were launched with, but only if this is the
+        // the very first time we're being launched (ie. NOT if we're being
+        // re-initialized after previously being shut down.)
+        // Once we're up and running, any future Intents we need
+        // to handle will come in via the onNewIntent() method.
+        if (icicle == null) {
+            Log.d(this, "this is our very first launch, checking intent...");
+            internalResolveIntent(getIntent());
+        }
+
         Log.d(this, "onCreate(): exit");
     }
 
@@ -150,6 +160,11 @@ public class InCallActivity extends Activity {
             mShowDialpadRequested = false;
         }
         updateSystemBarTranslucency();
+
+        final Call call = CallList.getInstance().getIncomingCall();
+        if (call != null) {
+            CallCommandClient.getInstance().setSystemBarNavigationEnabled(false);
+        }
     }
 
     // onPause is guaranteed to be called when the InCallActivity goes
@@ -164,6 +179,8 @@ public class InCallActivity extends Activity {
         mDialpadFragment.onDialerKeyUp(null);
 
         InCallPresenter.getInstance().onUiShowing(false);
+
+        CallCommandClient.getInstance().setSystemBarNavigationEnabled(true);
     }
 
     @Override
@@ -500,6 +517,8 @@ public class InCallActivity extends Activity {
             mConferenceManagerFragment.setVisible(true);
             mConferenceManagerShown = true;
             updateSystemBarTranslucency();
+        } else {
+            mConferenceManagerFragment.setVisible(false);
         }
     }
 
@@ -672,8 +691,7 @@ public class InCallActivity extends Activity {
         Log.d(this, "maybeShowErrorDialogOnDisconnect: Call=" + call);
 
         if (!isFinishing() && call != null) {
-            final int resId = getResIdForDisconnectCause(call.getDisconnectCause(),
-                    call.getSuppServNotification());
+            final int resId = getResIdForDisconnectCause(call);
             if (resId != INVALID_RES_ID) {
                 showErrorDialog(resId);
             }
@@ -776,26 +794,18 @@ public class InCallActivity extends Activity {
         mDialog.show();
     }
 
-    private int getResIdForDisconnectCause(Call.DisconnectCause cause,
-            Call.SsNotification notification) {
+    private int getResIdForDisconnectCause(Call call) {
+        Call.DisconnectCause cause = call.getDisconnectCause();
         int resId = INVALID_RES_ID;
 
         if (cause == Call.DisconnectCause.INCOMING_MISSED) {
-            // If the network sends SVC Notification then this dialog will be displayed
-            // in case of B when the incoming call at B is not answered and gets forwarded
-            // to C
-            if (notification != null && notification.notificationType == 1 &&
-                    notification.code ==
-                    Call.SsNotification.MT_CODE_ADDITIONAL_CALL_FORWARDED) {
+            if (call.wasAdditionalCallForwarded()) {
                 resId = R.string.callUnanswered_forwarded;
             }
         } else if (cause == Call.DisconnectCause.CALL_BARRED) {
             // When call is disconnected with this code then it can either be barring from
             // MO side or MT side.
-            // In MT case, if network sends SVC Notification then this dialog will be
-            // displayed when A is calling B & incoming is barred on B.
-            if (notification != null && notification.notificationType == 0 &&
-                    notification.code == Call.SsNotification.MO_CODE_INCOMING_CALLS_BARRED) {
+            if (call.isRemoteIncomingCallBarringEnabled()) {
                 resId = R.string.callFailed_incoming_cb_enabled;
             } else {
                 resId = R.string.callFailed_cb_enabled;
